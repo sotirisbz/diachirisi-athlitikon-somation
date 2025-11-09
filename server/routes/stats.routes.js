@@ -28,7 +28,10 @@ router.get("/", async (req, res, next) => {
       athletesByStatus,
       teamsByCategory,
     });
-  } catch (err) {}
+  } catch (err) {
+    console.error("Stats route error:", err);
+    next(err);
+  }
 });
 
 export default router;

@@ -117,7 +117,7 @@ export default function StaffPage() {
           </p>
         </div>
         <Button onClick={() => setIsModalOpen(true)}>
-          Προσθήκη Μέλου του Προσωπικού
+          Προσθήκη Μέλους του Προσωπικού
         </Button>
       </div>
 

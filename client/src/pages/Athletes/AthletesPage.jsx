@@ -9,6 +9,7 @@ import Loading from "../../components/common/Loading/Loading.jsx";
 import Card from "../../components/common/Card/Card.jsx";
 import DataTable from "../../components/common/DataTable/DataTable.jsx";
 import Modal from "../../components/common/Modal/Modal.jsx";
+import AthleteForm from "./components/AthleteForm.jsx";
 
 export default function AthletesPage() {
   const dispatch = useDispatch();
@@ -39,6 +40,11 @@ export default function AthletesPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedAthlete(null);
+  };
+
+  const handleFormSuccess = () => {
+    handleCloseModal();
+    dispatch(fetchAthletes());
   };
 
   const filteredAthletes = athletes.filter(
@@ -131,7 +137,11 @@ export default function AthletesPage() {
         title={selectedAthlete ? "Τροποποίηση Αθλητή" : "Προσθήκη Αθλητή"}
         size="lg"
       >
-        {/* <AthleteForm   /> */}
+        <AthleteForm
+          athlete={selectedAthlete}
+          onSuccess={handleFormSuccess}
+          onCancel={handleCloseModal}
+        />
       </Modal>
     </div>
   );

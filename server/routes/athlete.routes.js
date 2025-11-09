@@ -8,7 +8,8 @@ router.get("/", async (req, res, next) => {
   try {
     const athletes = await Athlete.find()
       .populate("team")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
     res.json(athletes);
   } catch (err) {
     next(err);
@@ -18,7 +19,9 @@ router.get("/", async (req, res, next) => {
 // Get single athlete
 router.get("/:id", async (req, res, next) => {
   try {
-    const athlete = await Athlete.findById(req.params.id).populate("team");
+    const athlete = await Athlete.findById(req.params.id)
+      .populate("team")
+      .lean();
     if (!athlete) {
       return res.status(404).json({ message: "Athlete not found" });
     }
@@ -33,7 +36,9 @@ router.post("/", async (req, res, next) => {
   try {
     const athlete = new Athlete(req.body);
     await athlete.save();
-    const populated = await Athlete.findById(athlete._id).populate("team");
+    const populated = await Athlete.findById(athlete._id)
+      .populate("team")
+      .lean();
     res.status(201).json(populated);
   } catch (err) {
     next(err);
@@ -46,7 +51,9 @@ router.put("/:id", async (req, res, next) => {
     const athlete = await Athlete.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
-    }).populate("team");
+    })
+      .populate("team")
+      .lean();
     if (!athlete) {
       return res.status(404).json({ message: "Athlete not found" });
     }

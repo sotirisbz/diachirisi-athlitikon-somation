@@ -13,6 +13,18 @@ export const fetchTeams = createAsyncThunk(
   }
 );
 
+export const fetchTeamById = createAsyncThunk(
+  "teams/fetchById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await teamService.getById(id);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
 export const createTeam = createAsyncThunk(
   "teams/create",
   async (data, { rejectWithValue }) => {
@@ -53,6 +65,7 @@ const teamSlice = createSlice({
   name: "teams",
   initialState: {
     items: [],
+    currentTeam: null,
     loading: false,
     error: null,
   },
@@ -73,6 +86,9 @@ const teamSlice = createSlice({
       .addCase(fetchTeams.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchTeamById.fulfilled, (state, action) => {
+        state.currentTeam = action.payload;
       })
       .addCase(createTeam.fulfilled, (state, action) => {
         state.items.unshift(action.payload);

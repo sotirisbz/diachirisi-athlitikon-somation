@@ -7,19 +7,21 @@ const router = express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const staff = await Staff.find()
-      .populate("assignedTeam")
-      .sort({ createdAt: -1 });
+      .populate("assignedTeams")
+      .sort({ createdAt: -1 })
+      .lean();
     res.json(staff);
   } catch (err) {
     next(err);
-    s;
   }
 });
 
 // Get single staff member
 router.get("/:id", async (req, res, next) => {
   try {
-    const staff = await Staff.findById(req.params.id).populate("assignedTeam");
+    const staff = await Staff.findById(req.params.id)
+      .populate("assignedTeams")
+      .lean();
     if (!staff) {
       return res.status(404).json({ message: "Staff member not found" });
     }
@@ -34,7 +36,9 @@ router.post("/", async (req, res, next) => {
   try {
     const staff = new Staff(req.body);
     await staff.save();
-    const populated = await Staff.findById(staff._id).populate("assignedTeams");
+    const populated = await Staff.findById(staff._id)
+      .populate("assignedTeams")
+      .lean();
     res.status(201).json(populated);
   } catch (err) {
     next(err);
@@ -47,7 +51,9 @@ router.put("/:id", async (req, res, next) => {
     const staff = await Staff.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
-    }).populate("assignedTeams");
+    })
+      .populate("assignedTeams")
+      .lean();
 
     if (!staff) {
       return res.status(404).json({ message: "Staff member not found" });

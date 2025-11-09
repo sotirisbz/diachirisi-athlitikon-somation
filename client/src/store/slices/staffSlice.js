@@ -13,6 +13,18 @@ export const fetchStaff = createAsyncThunk(
   }
 );
 
+export const fetchStaffById = createAsyncThunk(
+  "staff/fetchById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await staffService.getById(id);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
 export const createStaff = createAsyncThunk(
   "staff/create",
   async (data, { rejectWithValue }) => {
@@ -53,6 +65,7 @@ const stafSlice = createSlice({
   name: "staff",
   initialState: {
     items: [],
+    currentStaff: null,
     loading: false,
     error: null,
   },
@@ -60,11 +73,15 @@ const stafSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    clearCurrentStaff: (state) => {
+      state.currentStaff = null;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchStaff.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchStaff.fulfilled, (state, action) => {
         state.loading = false;
@@ -73,6 +90,9 @@ const stafSlice = createSlice({
       .addCase(fetchStaff.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchStaffById.fulfilled, (state, action) => {
+        state.currentStaff = action.payload;
       })
       .addCase(createStaff.fulfilled, (state, action) => {
         state.items.unshift(action.payload);

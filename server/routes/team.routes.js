@@ -7,11 +7,14 @@ const router = express.Router();
 // Get all teams
 router.get("/", async (req, res, next) => {
   try {
-    const teams = Team.find()
-      .populate("coach assistantCoaches")
-      .sort({ createdAt: -1 });
+    const teams = await Team.find()
+      .populate("coach", "firstName lastName email role")
+      .populate("assistantCoaches", "firstName lastName email role")
+      .sort({ createdAt: -1 })
+      .lean();
     res.json(teams);
   } catch (err) {
+    console.error("Error in GET /teams", err);
     next(err);
   }
 });
@@ -19,16 +22,36 @@ router.get("/", async (req, res, next) => {
 // Get a single team with its athletes
 router.get("/:id", async (req, res, next) => {
   try {
-    const team = await Team.findById(req.params.id).populate(
-      "coach assistantCoaches"
-    );
+    const team = await Team.findById(req.params.id)
+      .populate("coach", "firstName lastName email role")
+      .populate("assistantCoaches", "firstName lastName email role")
+      .lean();
     if (!team) {
       return res.status(404).json({ message: "Team not found" });
     }
     // Get all athletes for this team
-    const athletes = await Athlete.find({ team: req.params.id });
-    res.json({ ...team.toObject(), athletes });
+    const athletes = await Athlete.find({ team: req.params.id })
+      .select("firstName lastName email position jerseyNumber status")
+      .lean();
+
+    // Retrun combined data
+    res.json({
+      _id: team._id,
+      name: team.name,
+      sport: team.sport,
+      category: team.category,
+      ageGroup: team.ageGroup,
+      coach: team.coach,
+      assistantCoaches: team.assistantCoaches,
+      maxCapacity: team.maxCapacity,
+      description: team.description,
+      status: team.status,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
+      athletes: athletes,
+    });
   } catch (err) {
+    console.error("Error in GET /teams/:id:", err);
     next(err);
   }
 });
@@ -37,12 +60,15 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const team = new Team(req.body);
-    await team.save();
-    const populated = await Team.findById(team._id).populate(
-      "coach assistanceCoaches"
-    );
+    const savedTeam = await team.save();
+
+    const populated = await Team.findById(savedTeam._id)
+      .populate("coach", "firstName lastName email role")
+      .populate("assistantCoaches", "firstName lastName email role")
+      .lean();
     res.status(201).json(populated);
   } catch (err) {
+    console.error("Error in POST /teams:", err);
     next(err);
   }
 });
@@ -53,7 +79,10 @@ router.put("/:id", async (req, res, next) => {
     const team = await Team.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
-    }).populate("coach assistantCoaches");
+      lean: true,
+    })
+      .populate("coach", "firstName lastName email role")
+      .populate("assistantCoaches", "firstName lastName email role");
 
     if (!team) {
       return res.status(404).json({ message: "Team not found" });
@@ -61,6 +90,7 @@ router.put("/:id", async (req, res, next) => {
 
     res.json(team);
   } catch (err) {
+    console.error("Error in PUT /teams/:id:", err);
     next(err);
   }
 });
@@ -72,8 +102,9 @@ router.delete("/:id", async (req, res, next) => {
     if (!team) {
       return res.status(404).json({ message: "Team not found" });
     }
-    res.json({ message: "Team deleted successfully" });
+    res.json({ message: "Team deleted successfully", id: req.params.id });
   } catch (err) {
+    console.error("Error in DELETE /teams/:id", err);
     next(err);
   }
 });

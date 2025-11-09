@@ -23,13 +23,13 @@ const teamSchema = new mongoose.Schema(
       trim: true,
     },
     coach: {
-      type: String, // todo
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Staff",
     },
     assistantCoaches: [
       {
-        type: String, // todo
-        ref: "staff",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Staff",
       },
     ],
     founded: {

@@ -3,6 +3,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDb from "./config/db.js";
+import athleteRoutes from "./routes/athlete.routes.js";
+import staffRoutes from "./routes/staff.routes.js";
+import teamRoutes from "./routes/team.routes.js";
+import statsRoutes from "./routes/stats.routes.js";
 dotenv.config();
 
 const app = express();
@@ -18,11 +22,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
-
-// mongoose
-//   .connect(process.env.MONGODB_URI)
-//   .then(() => console.log("Mongodb connected successfully"))
-//   .catch((err) => console.error("Mongodb connection error: ", err));
 connectDb();
 
 // Health check route
@@ -35,14 +34,25 @@ app.get("/api/health", (req, res) => {
       express: "5.1.0",
       mongoose: "8.19.1",
     },
+    timestamp: new Date().toISOString(),
   });
 });
 
 // Routes
+app.use("/api/athletes", athleteRoutes);
+app.use("/api/teams", teamRoutes);
+app.use("/api/staff", staffRoutes);
+app.use("/api/stats", statsRoutes);
 
-// Expres automati error handling for routes
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Express automati error handling for routes
 app.use((err, req, res, next) => {
   console.error(err.stack);
+
   res.status(err.status || 500).json({
     message: err.message || "Something went wrong",
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }),

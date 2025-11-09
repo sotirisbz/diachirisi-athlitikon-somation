@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const staffSchema = new mongoose.Schema(
   {
@@ -77,6 +77,6 @@ staffSchema.virtual("fullName").get(function () {
 });
 
 staffSchema.set("toJSON", { virtuals: true });
-staffSchema.set("toObject", { virtuals: ture });
+staffSchema.set("toObject", { virtuals: true });
 
 export const Staff = mongoose.model("Staff", staffSchema);

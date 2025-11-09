@@ -1,14 +1,14 @@
-import { configureStrore } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import athleteReducer from "./slices/athleteSlice.js";
 import teamsReducer from "./slices/teamSlice.js";
 import staffReducer from "./slices/staffSlice.js";
 import uiReducer from "./slices/uiSlice.js";
 
-export const store = configureStrore({
+export const store = configureStore({
   reducer: {
     athletes: athleteReducer,
     teams: teamsReducer,
-    statff: staffReducer,
+    staff: staffReducer,
     ui: uiReducer,
   },
 });
