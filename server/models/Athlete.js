@@ -13,7 +13,7 @@ const athleteSchema = new mongoose.Schema(
       trim: true,
     },
     dateOfBirth: {
-      type: Number,
+      type: Date,
       required: [true, "Date of birth is required"],
     },
     gender: {

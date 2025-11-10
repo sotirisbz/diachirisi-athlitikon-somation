@@ -28,19 +28,19 @@ export default function Navigation() {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 gap-2">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive(item.path)
                     ? "bg-blue-100 text-blue-700"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                <span className="mr-2">{item.icon}</span>
-                {item.label}
+                {/*   className="inline-flex items-center justify-center px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" */}
+                <span className="mr-2">{item.icon}</span> {item.label}
               </Link>
             ))}
           </div>

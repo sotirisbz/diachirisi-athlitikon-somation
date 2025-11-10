@@ -165,9 +165,9 @@ export default function AthleteForm({ athlete, onSuccess, onCancel }) {
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="θηλυκό">Θηλυκό</option>
-            <option value="αρσενικό">Αρσενικό</option>
-            <option value="άλλο">Άλλο</option>
+            <option value="female">Θηλυκό</option>
+            <option value="male">Αρσενικό</option>
+            <option value="other">Άλλο</option>
           </select>
         </div>
 
